@@ -1,0 +1,34 @@
+---
+# An example playbook that runs a script,
+# passes a parameter, checks the exit code and prints the result.
+#
+# If the script should fail (return an exit status of >1) then we
+# can tell Ansible to fail the task.
+#
+# We put this inside a block so that if we are running more than
+# one command, we can fail the whole block.
+
+# Only run on the "bristol" group of hosts.
+- hosts: bristol
+
+  # Just some example variables for a bitmask
+  vars:
+    poweron_bitmask: "01000000"
+    poweroff_bitmask: "00000000"
+
+  tasks:
+    - name: Start the poweron process
+      block:
+        # Here we run the poweroff script but fail when the exit status is >0
+        - name: Run the poweroff script
+          ansible.builtin.command: "./device.py -m {{ poweroff_bitmask }}"
+          register: output
+          failed_when: output.rc > 0
+
+        # If the script gets to here, then we know it's been successfully executed.
+        - name: Print the output of the script when it executes successfully.
+          ansible.builtin.debug:
+            msg:
+              - "System {{ inventory_hostname }}"
+              - "Result {{ output.stdout }}"
+              - "Exit status {{ output.rc }}"
