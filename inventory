@@ -1,0 +1,8 @@
+# A group specifically for the bristol hosts
+[bristol]
+radiohead[1:9] ansible_host=127.0.0.1 connection=local
+
+# A group of groups should we need to work on more than just hte bristol site.
+[all_radios:children]
+bristol 
+
