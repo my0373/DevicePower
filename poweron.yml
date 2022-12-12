@@ -19,6 +19,12 @@
   tasks:
     - name: Start the poweron process
       block:
+        # Here we run the minicom script but fail when the exit status is >0
+        - name: Run the minicom script
+          ansible.builtin.command: "/usr/bin/minicom"
+          register: output
+          failed_when: output.rc > 0
+
         # Here we run the poweron script but fail when the exit status is >0
         - name: Run the poweron script
           ansible.builtin.command: "./device.py -m {{ poweron_bitmask }}"
